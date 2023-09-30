@@ -1,2 +1,2 @@
 # movie-api
-Node.JS Eğitim Seti
+Node.JS Eğitim Seti readme
