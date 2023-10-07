@@ -8,10 +8,15 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const movieRouter = require('./routes/movie');
 const directorRouter = require('./routes/director');
+const tokenRouter = require('./middleware/verify-token');
+
 const { mongo } = require('mongoose');
 const bodyParser = require('body-parser');
-
 const app = express();
+
+// config 
+const config = require('./config');
+app.set('api_secret_key',config.api_secret_key);
 
 //db connection 
 const db = require('./helper/db.js')();
@@ -28,6 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/api',tokenRouter)
 app.use('/api/movies', movieRouter);
 app.use('/api/directors', directorRouter);
 

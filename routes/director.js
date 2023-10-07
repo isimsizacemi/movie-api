@@ -24,59 +24,58 @@ router.get('/', async (req,res) => {
     }
 })
 
-router.get('/:director_id',  (req, res) => {
-    const promise = Director.aggregate([
-        {
-            $match: {
-                '_id':  mongoose.Types.ObjectId(req.params.director_id.toString)
-            }
-        },
-        {
-            $lookup: {
-                from: 'movies',
-                localField: '_id',
-                foreignField: 'director_id',
-                as: 'movies'
-            }
-        },
-        {
-            $unwind: {
-                path: '$movies',
-                preserveNullAndEmptyArrays: true // Bu, yönetmenin hiç filmi olmayanları da içerir.
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    _id: '$_id',
-                    name: '$name',
-                    surname: '$surname',
-                    bio: '$bio'
-                   
-                },
-                
-                movies: {
-                    $push: '$movies',
-                }
-                
-            }
-        },
-        {
-            $project: {
-                _id: '$_id._id',
-                name: '$_id.name',
-                surname: '$_id.surname',
-                movies : '$movies'
-            }
-        }
-    ]);
 
-    promise.then( () => {
-        res.json(promise);
-    }).catch((err) => {
-        res.status(500).json({ error: 'Yönetmenler ve filmler alınamadı.' });
-    });
+router.get('/:director_id', (req, res) => {
+	const promise = Director.aggregate([
+		{
+			$match: {
+				'_id': mongoose.Types.ObjectId(req.params.director_id)
+			}
+		},
+		{
+			$lookup: {
+				from: 'movies',
+				localField: '_id',
+				foreignField: 'director_id',
+				as: 'movies'
+			}
+		},
+		{
+			$unwind: {
+				path: '$movies',
+				preserveNullAndEmptyArrays: true
+			}
+		},
+		{
+			$group: {
+				_id: {
+					_id: '$_id',
+					name: '$name',
+					surname: '$surname',
+					bio: '$bio'
+				},
+				movies: {
+					$push: '$movies'
+				}
+			}
+		},
+		{
+			$project: {
+				_id: '$_id._id',
+				name: '$_id.name',
+				surname: '$_id.surname',
+				movies: '$movies'
+			}
+		}
+	]);
+
+	promise.then((data) => {
+		res.json(data);
+	}).catch((err) => {
+		res.json(err);
+	});
 });
+
 
 
 module.exports = router;
