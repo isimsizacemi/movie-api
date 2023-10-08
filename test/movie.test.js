@@ -73,9 +73,58 @@ describe('Movies TESTS', () => {
                     res.body.should.have.property('imdb_score');
                     res.body.should.have.property('_id').eql(movieID);
                     done();
-                })
+            })
         });
     });
 
-  
+
+    describe('/PUT/:director_id update testing', () => {
+        it('it should UPDATE a movie' , (done) => {
+            const updateMovie = {
+                title : '93create',
+                director_id :'652061f6fd6f2eb2f087296a' ,
+                category : 'cezve',
+                imdb_score : '2'
+            }
+            chai.request(server)
+                .put('/api/movies/'+movieID)
+                .send(updateMovie)
+                .set('x-access-token', token)
+                .end((err,res)=> {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('title').eql(updateMovie.title);
+                    res.body.should.have.property('director_id');
+                    res.body.should.have.property('category');
+                    res.body.should.have.property('imdb_score');
+                   
+
+
+                    done();
+                });
+        });
+    });
+
+    describe('/Delete/:movie_id Delete testing', () => {
+        it('should DELETE a movie', (done) => {
+            const movieID = '123456789'; // Replace with a valid movie ID
+            const movie = {
+                title: '93create',
+                director_id: '652061f6fd6f2eb2f087296a',
+                category: 'cezve',
+                imdb_score: '2'
+            }
+            chai.request(server)
+                .delete('/api/movies/' + movieID) // Use the valid movie ID
+              
+                .set('x-access-token', token)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status').eql(1);
+                    done();
+                });
+        });
+    });
+    
 });
